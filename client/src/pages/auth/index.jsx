@@ -47,34 +47,40 @@ const Auth = () => {
     
     const handleLogin = async () => {
         if(validateLogin()) {
-            const response = await apiClient.post(
-                LOGIN_ROUTE,
-                {email, password},
-                { withCredentials: true }
-            );
-            if(response.data.user.id) {
-                setUserInfo(response.data.user);
-                if(response.data.user.profileSetup)
-                    navigate("/chat");
-                else
-                    navigate("/profile");
+            try {
+                const response = await apiClient.post(
+                    LOGIN_ROUTE,
+                    {email, password},
+                    { withCredentials: true }
+                );
+                if(response.status === 200) {
+                    setUserInfo(response.data.user);
+                    if(response.data.user.profileSetup)
+                        navigate("/chat");
+                    else
+                        navigate("/profile");
+                }
+            } catch (error) {
+                toast.error(error.response?.data?.message || error.response?.data || "Something went wrong");
             }
-            console.log({ response });
         }
     };
 
     const handleSignup = async () => {
         if(validateSignup()) {
-            const response = await apiClient.post(
-                SIGNUP_ROUTE,
-                {email, password},
-                { withCredentials: true }
-            );
-            if(response.status === 201) {
-                setUserInfo(response.data.user);
-                navigate("/profile");
+            try {
+                const response = await apiClient.post(
+                    SIGNUP_ROUTE,
+                    {email, password},
+                    { withCredentials: true }
+                );
+                if(response.status === 201) {
+                    setUserInfo(response.data.user);
+                    navigate("/profile");
+                }
+            } catch (error) {
+                toast.error(error.response?.data?.message || error.response?.data || "Something went wrong");
             }
-            console.log({ response });
         }
     };
 
